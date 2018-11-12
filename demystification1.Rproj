@@ -1,13 +1,33 @@
-Version: 1.0
+rm(list=ls())
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
-AlwaysSaveHistory: Default
-
-EnableCodeIndexing: Yes
-UseSpacesForTab: Yes
-NumSpacesForTab: 2
-Encoding: UTF-8
-
-RnwWeave: Sweave
-LaTeX: pdfLaTeX
+data<- read.csv(file= "dataset.csv", header=TRUE, sep = ",")
+str(data)
+summary(data)
+data_region <- split(data, data$Climate)
+par(mfrow = c(1,2))
+boxplot(data_region$C$IRI, main = "IRI cold regions")
+boxplot(data_region$W$IRI, main = "IRI warm regions")
+IRI.split <- split(data, data$Age)
+IRI.year1 <- IRI.split$'1'$IRI
+IRI.year2 <- IRI.split$'2'$IRI
+IRI.year3 <- IRI.split$'3'$IRI
+IRI.year4 <- IRI.split$'4'$IRI
+IRI.year5 <- IRI.split$'5'$IRI
+IRI.set <- cbind(IRI.year1,IRI.year2,IRI.year3,IRI.year4,IRI.year5)
+IRI.based <- IRI.set-IRI.year1
+par(mfrow = c(2,2))
+hist(IRI.based[,2], freq = F, main = "Deterioration 2nd year")
+hist(IRI.based[,3], freq = F, main = "Deterioration 3rd year")
+hist(IRI.based[,4], freq = F, main = "Deterioration 4th year")
+hist(IRI.based[,5], freq = F, main = "Deterioration 5th year")
+install.packages("corrplot")
+install.packages("PerformanceAnalytics")
+library(corrplot)
+library(PerformanceAnalytics)
+par(mfrow = c(1,1))
+?par    
+plot(data$AAT, data$AAFI)
+numeric.data <- subset(data, select = Age:IRI)
+corrplot(cor(numeric.data), method = "circle")
+pairs(numeric.data)
+chart.Correlation(numeric.data, histogram = T)
